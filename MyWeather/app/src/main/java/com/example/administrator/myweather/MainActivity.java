@@ -2,77 +2,84 @@ package com.example.administrator.myweather;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.administrator.myweather.gson.CityBean;
+import com.example.administrator.myweather.gson.ProvinceBean;
+import com.example.administrator.myweather.internet.DefaultObserver;
+import com.example.administrator.myweather.internet.RetrofitManager;
+import com.example.administrator.myweather.util.ActivityUtil;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private static String TAG = "MainActivity";
-    private Button mGetProvince;
+    private Button mGetProvinceBtn;
+    private Button mGetCityBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        initListener();
     }
 
     private void initView() {
-        mGetProvince = (Button) findViewById(R.id.get_province);
-//        mGetProvince.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Observable<List<ProvinceBean>> observable = RetrofitUtil.getHttpService().listProvince();
-//                observable.subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(new Observer<List<ProvinceBean>>() {
-//                            @Override
-//                            public void onSubscribe(Disposable d) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onNext(List<ProvinceBean> list) {
-//                                for (ProvinceBean provinceBean: list) {
-//                                        Log.e(TAG, provinceBean.getId() + provinceBean.getName());
-//                                    }
-//                                mGetProvince.setText(list.get(0).getName());
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onComplete() {
-//                                mGetProvince.setText("complete");
-//
-//                            }
-//                        });
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        Call<List<ProvinceBean>> call = RetrofitUtil.getHttpService().listProvince();
-//                        call.enqueue(new Callback<List<ProvinceBean>>() {
-//                            @Override
-//                            public void onResponse(Call<List<ProvinceBean>> call, Response<List<ProvinceBean>> response) {
-//                                if (response.isSuccessful()) {
-//                                    List<ProvinceBean> list = response.body();
-//                                    for (ProvinceBean provinceBean: list) {
-//                                        Log.e(TAG, provinceBean.getId() + provinceBean.getName());
-//                                    }
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onFailure(Call<List<ProvinceBean>> call, Throwable t) {
-//
-//                            }
-//                        });
-//
-//                    }
-//                }.start();
+        mGetProvinceBtn = (Button) findViewById(R.id.get_province);
+        mGetCityBtn = (Button) findViewById(R.id.get_city);
+
+    }
+
+    private void initListener() {
+        mGetProvinceBtn.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.get_province:
+                ActivityUtil.goChooseProvinceActivity(this);
+//                getProvinceData();
+                break;
+            case R.id.get_city:
+//                getCityData();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 获取省份及ID
+     */
+    private void getProvinceData() {
+        RetrofitManager.getIntance().getlistProvince(new DefaultObserver<List<ProvinceBean>>() {
+            @Override
+            public void onNext(List<ProvinceBean> provinceBeenList) {
+                for (ProvinceBean provinceBean : provinceBeenList) {
+                    Log.e(TAG, provinceBean.getId() + provinceBean.getName());
+                }
+                mGetProvinceBtn.setText(provinceBeenList.get(0).getName());
             }
-//        });
-//    }
+        });
+    }
+
+    /**
+     * 获取市及ID
+     */
+    private void getCityData() {
+        RetrofitManager.getIntance().getListCity("22", new DefaultObserver<List<CityBean>>() {
+            @Override
+            public void onNext(List<CityBean> cityBeenList) {
+                mGetCityBtn.setText(cityBeenList.get(0).getId());
+            }
+        });
+    }
+
+    private void getCountyData() {
+
+    }
 }

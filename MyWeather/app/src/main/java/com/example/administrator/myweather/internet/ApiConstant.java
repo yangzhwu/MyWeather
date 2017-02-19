@@ -10,4 +10,6 @@ public class ApiConstant {
     public static String URL = "http://guolin.tech/api/";
 
     public static String WEATHER_KRY = "d74d81e2205841e98890a0a64980d14f";
+
+    public static String WEATHER_KEY_1 = "94cea876529f43a3baa0378496f6b418";
 }
