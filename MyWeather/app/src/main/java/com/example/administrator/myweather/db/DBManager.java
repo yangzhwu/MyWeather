@@ -2,7 +2,10 @@ package com.example.administrator.myweather.db;
 
 import android.content.Context;
 
+import org.greenrobot.greendao.query.Query;
+
 import java.util.List;
+import java.util.concurrent.LinkedTransferQueue;
 
 /**
  * Created by zhengwuy on 2017/2/18.
@@ -52,6 +55,38 @@ public class DBManager {
         ProvinceEntityDao provinceEntityDao = daoSession.getProvinceEntityDao();
         return provinceEntityDao.loadAll();
     }
+
+    public List<CityEntity> queryCityList() {
+        DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
+        DaoSession daoSession = daoMaster.newSession();
+        CityEntityDao cityEntityDao = daoSession.getCityEntityDao();
+        return cityEntityDao.loadAll();
+    }
+
+    public List<CityEntity> queryCityListByProvinceId(String provinceId) {
+        DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
+        DaoSession daoSession = daoMaster.newSession();
+        CityEntityDao cityEntityDao = daoSession.getCityEntityDao();
+        Query<CityEntity> query = cityEntityDao.queryBuilder().where(CityEntityDao.Properties.MProvinceId.eq(provinceId))
+                .build();
+        return query.list();
+    }
+
+    public List<CountyEntity> queryCountyList() {
+        DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
+        DaoSession daoSession = daoMaster.newSession();
+        CountyEntityDao countyEntityDao = daoSession.getCountyEntityDao();
+        return countyEntityDao.loadAll();
+    }
+
+    public List<CountyEntity> queryCountyListByCityId(String cityId) {
+        DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
+        DaoSession daoSession = daoMaster.newSession();
+        CountyEntityDao countyEntityDao = daoSession.getCountyEntityDao();
+        Query<CountyEntity> query = countyEntityDao.queryBuilder().where(CountyEntityDao.Properties.MCityId.eq(cityId)).build();
+        return query.list();
+    }
+
 
     /**
      * 插入市数据

@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class CityBean implements Serializable {
     private int id;
     private String name;
+    private int province_id;
 
     public int getId() {
         return id;

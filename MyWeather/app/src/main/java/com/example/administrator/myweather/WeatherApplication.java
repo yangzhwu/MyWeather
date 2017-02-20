@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.administrator.myweather.constant.SharedPreferenceKeyConstant;
 import com.example.administrator.myweather.db.CityEntity;
+import com.example.administrator.myweather.db.CityEntityDao;
 import com.example.administrator.myweather.db.CountyEntity;
 import com.example.administrator.myweather.db.DBManager;
 import com.example.administrator.myweather.db.ProvinceEntity;
@@ -13,8 +14,10 @@ import com.example.administrator.myweather.gson.CountyBean;
 import com.example.administrator.myweather.gson.ProvinceBean;
 import com.example.administrator.myweather.internet.DefaultObserver;
 import com.example.administrator.myweather.internet.RetrofitManager;
+import com.example.administrator.myweather.util.CityDataLoad;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,13 +40,28 @@ public class WeatherApplication extends Application {
         initData();
     }
 
+    /**
+     * 检测省份，市区，县等信息是否已经加载读取到数据库中，没有，则读取文件加载
+     * 主要是为了减少api请求
+     * 这三个信息是放在asserts文件中的
+     */
     private void initData() {
-        boolean hasLoadProvinceData = SharedPreferenceHelper.getInstance()
+        boolean hasLoadData = SharedPreferenceHelper.getInstance()
                 .getBoolean(SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, false);
-        if (!hasLoadProvinceData) {
-            loadProvinceData();
+        if (!hasLoadData) {
+            loadData();
         }
     }
+
+    private void loadData() {
+        CityDataLoad.loadCityData(this);
+        SharedPreferenceHelper.getInstance().putBoolean(SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, true);
+
+    }
+
+//    public File getFile() {
+//        return mFile;
+//    }
 
     private List<ProvinceEntity> mProvinceEntityList = new ArrayList<>();
     private void loadProvinceData() {

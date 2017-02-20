@@ -6,7 +6,7 @@
     android:id="@+id/activity_choose_province"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.administrator.myweather.ChooseProvinceActivity">
+    tools:context="com.example.administrator.myweather.activity.ChooseProvinceActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

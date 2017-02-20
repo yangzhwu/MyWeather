@@ -1,6 +1,7 @@
 package com.example.administrator.myweather.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,47 +10,48 @@ import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
 import com.example.administrator.myweather.activity.ChooseProvinceActivity;
+import com.example.administrator.myweather.db.CityEntity;
 import com.example.administrator.myweather.db.ProvinceEntity;
 import com.example.administrator.myweather.util.ActivityUtil;
 
 import java.util.List;
 
 /**
- * Created by zhengwuy on 2017/2/19.
- * Email: 963460692@qq.com
+ * Created by zhengwuy on 2017/2/20.
+ * Emali: 963460692@qq.com
  * description:
  */
 
-public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHolder> {
-    private List<ProvinceEntity> mProvinceEntityList;
+public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder>{
+    private List<CityEntity> mCityEntityList;
     private Context mContext;
 
-    public ProvinceAdapter(Context context, List<ProvinceEntity> list) {
-        mProvinceEntityList = list;
+    public CityAdapter(Context context, List<CityEntity> list) {
         mContext = context;
+        mCityEntityList = list;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CityAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.province_item, parent, false);
-        return new ViewHolder(view);
+        return new CityAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.mNameTv.setText(mProvinceEntityList.get(position).getMProvinceName());
+    public void onBindViewHolder(CityAdapter.ViewHolder holder, final int position) {
+        holder.mNameTv.setText(mCityEntityList.get(position).getMCityName());
         holder.mNameTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityUtil.goChooseProvinceActivity(mContext, ChooseProvinceActivity.CHOOSE_TYPE_CITY,
-                        mProvinceEntityList.get(position).getMProvinceId());
+                ActivityUtil.goChooseProvinceActivity(mContext, ChooseProvinceActivity.CHOOSE_TYPE_COUNTY,
+                        mCityEntityList.get(position).getMCityId());
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mProvinceEntityList == null ? 0 : mProvinceEntityList.size();
+        return mCityEntityList == null ? 0 : mCityEntityList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
