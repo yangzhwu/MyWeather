@@ -79,11 +79,11 @@ public class RetrofitManager {
 
     /**
      * 获取天气信息
-     * @param countyId 县id
+     * @param weatherId weatherId
      * @param observer 回调
      */
-    public void getWeather(String countyId, Observer<List<WeatherBean>> observer) {
-        defaultSchedule(mHttpService.getWeatherInfo(countyId, ApiConstant.WEATHER_KRY), observer);
+    public void getWeather(String weatherId, Observer<WeatherBean> observer) {
+        defaultSchedule(mHttpService.getWeatherInfo(weatherId, ApiConstant.WEATHER_KRY), observer);
     }
 
 

@@ -40,4 +40,14 @@ public class SharedPreferenceHelper {
         return mSharedPreferences.getBoolean(key, defaultValue);
     }
 
+    public void putString(String key, String value) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public String getString(String key, String defaultvalue) {
+        return mSharedPreferences.getString(key, defaultvalue);
+    }
+
 }

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.administrator.myweather.activity.ChooseProvinceActivity;
 import com.example.administrator.myweather.R;
+import com.example.administrator.myweather.activity.MainActivity;
 import com.example.administrator.myweather.constant.BundleConstant;
 
 /**
@@ -28,6 +29,12 @@ public class ActivityUtil {
         intent.putExtra(BundleConstant.CHOOSE_ID, id);
         context.startActivity(intent);
         startAnim((AppCompatActivity) context);
+    }
+
+    public static void goHomeActivity(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+        finishAnim((AppCompatActivity) context);
     }
 
     public static void finishAnim(AppCompatActivity context) {

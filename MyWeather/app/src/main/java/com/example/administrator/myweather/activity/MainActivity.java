@@ -1,23 +1,28 @@
 package com.example.administrator.myweather.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
 import com.example.administrator.myweather.WeatherApplication;
+import com.example.administrator.myweather.constant.SharedPreferenceKeyConstant;
 import com.example.administrator.myweather.db.CityEntity;
 import com.example.administrator.myweather.db.CountyEntity;
 import com.example.administrator.myweather.db.DBManager;
 import com.example.administrator.myweather.db.ProvinceEntity;
 import com.example.administrator.myweather.gson.CityBean;
 import com.example.administrator.myweather.gson.ProvinceBean;
+import com.example.administrator.myweather.gson.WeatherBean;
 import com.example.administrator.myweather.internet.DefaultObserver;
 import com.example.administrator.myweather.internet.RetrofitManager;
 import com.example.administrator.myweather.util.ActivityUtil;
+import com.example.administrator.myweather.util.SharedPreferenceHelper;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -72,7 +77,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    private void writeData() {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String weatherId = SharedPreferenceHelper.getInstance().getString(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID, null);
+        if (!TextUtils.isEmpty(weatherId)) {
+            RetrofitManager.getIntance().getWeather(weatherId, new DefaultObserver<WeatherBean>() {
+                @Override
+                public void onNext(WeatherBean weatherBeen) {
+                    TextView textView = (TextView) findViewById(R.id.weather);
+                    textView.setText(weatherBeen.getHeWeather().get(0).getStatus());
+                }
+            });
+        }
+    }
+
+    //    private void writeData() {
 //        Log.e(TAG, "start write");
 //        WeatherApplication application = (WeatherApplication) getApplication();
 //        if (application.getFile() != null) {

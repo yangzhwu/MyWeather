@@ -30,5 +30,5 @@ public interface HttpService {
     Observable<List<CountyBean>> listCounty(@Path("provinceId") String provinceId, @Path("cityId") String cityId);
 
     @GET("weather")
-    Observable<List<WeatherBean>> getWeatherInfo(@Query("cityid") String cityId, @Query("key") String key);
+    Observable<WeatherBean> getWeatherInfo(@Query("cityid") String cityId, @Query("key") String key);
 }

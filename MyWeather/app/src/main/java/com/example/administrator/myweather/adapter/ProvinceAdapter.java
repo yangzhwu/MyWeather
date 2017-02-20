@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
@@ -38,7 +39,7 @@ public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.mNameTv.setText(mProvinceEntityList.get(position).getMProvinceName());
-        holder.mNameTv.setOnClickListener(new View.OnClickListener() {
+        holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ActivityUtil.goChooseProvinceActivity(mContext, ChooseProvinceActivity.CHOOSE_TYPE_CITY,
@@ -54,10 +55,12 @@ public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView mNameTv;
+        LinearLayout mLinearLayout;
 
         ViewHolder(View itemView) {
             super(itemView);
             mNameTv = (TextView) itemView.findViewById(R.id.province_name);
+            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.linearlayout);
         }
     }
 }

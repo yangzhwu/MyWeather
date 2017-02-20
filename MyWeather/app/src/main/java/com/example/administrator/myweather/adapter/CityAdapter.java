@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
@@ -22,7 +23,7 @@ import java.util.List;
  * description:
  */
 
-public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder>{
+public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     private List<CityEntity> mCityEntityList;
     private Context mContext;
 
@@ -40,7 +41,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(CityAdapter.ViewHolder holder, final int position) {
         holder.mNameTv.setText(mCityEntityList.get(position).getMCityName());
-        holder.mNameTv.setOnClickListener(new View.OnClickListener() {
+        holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ActivityUtil.goChooseProvinceActivity(mContext, ChooseProvinceActivity.CHOOSE_TYPE_COUNTY,
@@ -55,11 +56,13 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder>{
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout mLinearLayout;
         TextView mNameTv;
 
         ViewHolder(View itemView) {
             super(itemView);
             mNameTv = (TextView) itemView.findViewById(R.id.province_name);
+            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.linearlayout);
         }
     }
 }

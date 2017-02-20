@@ -8,4 +8,5 @@ package com.example.administrator.myweather.constant;
 
 public class SharedPreferenceKeyConstant {
     public static final String KEY_HAS_LOAD_DATA = "has_load_data";
+    public static final String KEY_CHOOSE_COUNTY_WEATHER_ID = "choose_county_weather_id";
 }
