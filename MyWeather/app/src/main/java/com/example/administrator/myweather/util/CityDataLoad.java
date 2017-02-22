@@ -13,8 +13,6 @@ import com.example.administrator.myweather.db.ProvinceEntity;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -83,7 +81,5 @@ public class CityDataLoad {
             e.printStackTrace();
         }
         Log.e(TAG, "load complete");
-
-
     }
 }

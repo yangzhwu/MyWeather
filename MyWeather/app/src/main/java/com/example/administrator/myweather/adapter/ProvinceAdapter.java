@@ -1,6 +1,7 @@
 package com.example.administrator.myweather.adapter;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
-import com.example.administrator.myweather.activity.ChooseProvinceActivity;
+import com.example.administrator.myweather.activity.ChooseAreaActivity;
 import com.example.administrator.myweather.db.ProvinceEntity;
-import com.example.administrator.myweather.util.ActivityUtil;
+import com.example.administrator.myweather.fragment.ChooseAreaFragment;
+import com.example.administrator.myweather.util.FragmentUtil;
 
 import java.util.List;
 
@@ -37,13 +39,15 @@ public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.mNameTv.setText(mProvinceEntityList.get(position).getMProvinceName());
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final ProvinceEntity provinceEntity = mProvinceEntityList.get(position);
+        holder.mNameTv.setText(provinceEntity.getMProvinceName());
         holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityUtil.goChooseProvinceActivity(mContext, ChooseProvinceActivity.CHOOSE_TYPE_CITY,
-                        mProvinceEntityList.get(position).getMProvinceId());
+                ChooseAreaFragment chooseAreaFragment = ChooseAreaFragment.newInstance(ChooseAreaActivity.CHOOSE_TYPE_CITY,
+                        provinceEntity.getMProvinceId());
+                FragmentUtil.replaceAreaFragment((AppCompatActivity) mContext, R.id.container, chooseAreaFragment, true);
             }
         });
     }

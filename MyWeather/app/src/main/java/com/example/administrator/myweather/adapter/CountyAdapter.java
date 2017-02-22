@@ -1,6 +1,9 @@
 package com.example.administrator.myweather.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +14,6 @@ import android.widget.TextView;
 import com.example.administrator.myweather.R;
 import com.example.administrator.myweather.constant.SharedPreferenceKeyConstant;
 import com.example.administrator.myweather.db.CountyEntity;
-import com.example.administrator.myweather.db.ProvinceEntity;
 import com.example.administrator.myweather.util.ActivityUtil;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
 
@@ -39,14 +41,19 @@ public class CountyAdapter extends RecyclerView.Adapter<CountyAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(CountyAdapter.ViewHolder holder, final int position) {
-        holder.mNameTv.setText(mCountyEntityList.get(position).getMCountyName());
+    public void onBindViewHolder(CountyAdapter.ViewHolder holder, int position) {
+        final CountyEntity countyEntity = mCountyEntityList.get(position);
+        holder.mNameTv.setText(countyEntity.getMCountyName());
         holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferenceHelper.getInstance().putString(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID,
-                        mCountyEntityList.get(position).getMWeatherId());
-                ActivityUtil.goHomeActivity(mContext);
+                        countyEntity.getMWeatherId());
+                Intent intent = new Intent();
+                intent.putExtra(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID, countyEntity.getMWeatherId());
+                ((AppCompatActivity)mContext).setResult(Activity.RESULT_OK, intent);
+                ((AppCompatActivity)mContext).finish();
+                ActivityUtil.finishAnim((AppCompatActivity) mContext);
             }
         });
     }

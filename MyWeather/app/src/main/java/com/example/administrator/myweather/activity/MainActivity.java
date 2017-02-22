@@ -3,44 +3,24 @@ package com.example.administrator.myweather.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
-import com.example.administrator.myweather.WeatherApplication;
 import com.example.administrator.myweather.constant.SharedPreferenceKeyConstant;
-import com.example.administrator.myweather.db.CityEntity;
-import com.example.administrator.myweather.db.CountyEntity;
-import com.example.administrator.myweather.db.DBManager;
-import com.example.administrator.myweather.db.ProvinceEntity;
-import com.example.administrator.myweather.gson.CityBean;
-import com.example.administrator.myweather.gson.ProvinceBean;
 import com.example.administrator.myweather.gson.WeatherBean;
 import com.example.administrator.myweather.internet.DefaultObserver;
 import com.example.administrator.myweather.internet.RetrofitManager;
 import com.example.administrator.myweather.util.ActivityUtil;
-import com.example.administrator.myweather.util.SharedPreferenceHelper;
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private static String TAG = "MainActivity";
+    private final static int REQUEST_CODE_FOR_CHOOSEAREA = 1;
     private Button mGetProvinceBtn;
     private Button mGetCityBtn;
+
+    //默认北京
+    private String mWeatherId = "CN101010100";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.get_province:
-                ActivityUtil.goChooseProvinceActivity(this, ChooseProvinceActivity.CHOOSE_TYPE_PROVINCE, "");
+                ActivityUtil.goChooseAreaActivity(this, REQUEST_CODE_FOR_CHOOSEAREA);
 //                getProvinceData();
                 break;
             case R.id.get_city:
@@ -78,135 +58,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        String weatherId = SharedPreferenceHelper.getInstance().getString(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID, null);
-        if (!TextUtils.isEmpty(weatherId)) {
-            RetrofitManager.getIntance().getWeather(weatherId, new DefaultObserver<WeatherBean>() {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_FOR_CHOOSEAREA:
+                if (resultCode == RESULT_OK) {
+                    if (data != null && !mWeatherId.equals(data.getStringExtra(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID))) {
+                        mWeatherId = data.getStringExtra(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID);
+                        loadWeatherData();
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void loadWeatherData() {
+        RetrofitManager.getIntance().getWeather(mWeatherId, new DefaultObserver<WeatherBean>() {
                 @Override
                 public void onNext(WeatherBean weatherBeen) {
                     TextView textView = (TextView) findViewById(R.id.weather);
                     textView.setText(weatherBeen.getHeWeather().get(0).getStatus());
                 }
             });
-        }
-    }
-
-    //    private void writeData() {
-//        Log.e(TAG, "start write");
-//        WeatherApplication application = (WeatherApplication) getApplication();
-//        if (application.getFile() != null) {
-//            Log.e(TAG, "file is not empty");
-//            File file = application.getFile();
-//            if (file.exists()) {
-//                file.delete();
-//            }
-//            try {
-//                if (file.createNewFile()) {
-//                    Log.e(TAG, "file created sucess");
-//                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
-//                    List<ProvinceEntity> list = DBManager.getInstance().queryProvinceList();
-//                    StringBuilder stringBuilder = new StringBuilder();
-//                    for (ProvinceEntity provinceEntity : list) {
-//                        stringBuilder.append("{id:" + provinceEntity.getId()
-//                                + ",mProvinceId:" + provinceEntity.getMProvinceId()
-//                                + ",mProvinceName:" + provinceEntity.getMProvinceName() + "}" );
-//                        bufferedWriter.write(stringBuilder.toString());
-//                        bufferedWriter.flush();
-//                        bufferedWriter.newLine();
-//                        stringBuilder.delete(0, stringBuilder.length());
-//                    }
-//                    bufferedWriter.close();
-//
-//                }
-//            } catch (IOException e) {
-//                Log.e(TAG, "create file failed");
-//                e.printStackTrace();
-//            }
-//
-//            File fileCity = new File(application.getExternalCacheDir(), "city.txt");
-//            if (fileCity.exists()) {
-//                fileCity.delete();
-//            }
-//            try {
-//                fileCity.createNewFile();
-//                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileCity));
-//                List<CityEntity> list = DBManager.getInstance().queryCityList();
-//                StringBuilder stringBuilder = new StringBuilder();
-//                for (CityEntity cityEntity : list) {
-//                    stringBuilder.append("{id:" + cityEntity.getId()
-//                            + ",mCityId:" + cityEntity.getMCityId()
-//                            + ",mCityName:" + cityEntity.getMCityName()
-//                            + ",mProvinceId:" + cityEntity.getMProvinceId() + "}");
-//                    bufferedWriter.write(stringBuilder.toString());
-//                    bufferedWriter.flush();
-//                    bufferedWriter.newLine();
-//                    stringBuilder.delete(0, stringBuilder.length());
-//                }
-//                bufferedWriter.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            File fileCounty = new File(application.getExternalCacheDir(), "county.txt");
-//            if (fileCounty.exists()) {
-//                fileCounty.delete();
-//            }
-//            try {
-//                fileCounty.createNewFile();
-//                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileCounty));
-//                List<CountyEntity> list = DBManager.getInstance().queryCountyList();
-//                StringBuilder stringBuilder = new StringBuilder();
-//                for (CountyEntity countyEntity : list) {
-//                    stringBuilder.append("{id:" + countyEntity.getId()
-//                            + ",mCountyId:" + countyEntity.getMCountyId()
-//                            + ",mCountyName:" + countyEntity.getMCountyName()
-//                            + ",mWeatherId:" + countyEntity.getMWeatherId()
-//                            + ",mCityId:" + countyEntity.getMCityId() + "}");
-//                    bufferedWriter.write(stringBuilder.toString());
-//                    bufferedWriter.flush();
-//                    bufferedWriter.newLine();
-//                    stringBuilder.delete(0, stringBuilder.length());
-//                }
-//                bufferedWriter.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//
-//        } else {
-//            Log.e(TAG, "file is null");
-//        }
-//    }
-//
-//    /**
-//     * 获取省份及ID
-//     */
-//    private void getProvinceData() {
-//        RetrofitManager.getIntance().getlistProvince(new DefaultObserver<List<ProvinceBean>>() {
-//            @Override
-//            public void onNext(List<ProvinceBean> provinceBeenList) {
-//                for (ProvinceBean provinceBean : provinceBeenList) {
-//                    Log.e(TAG, provinceBean.getId() + provinceBean.getName());
-//                }
-//                mGetProvinceBtn.setText(provinceBeenList.get(0).getName());
-//            }
-//        });
-//    }
-
-    /**
-     * 获取市及ID
-     */
-    private void getCityData() {
-        RetrofitManager.getIntance().getListCity("22", new DefaultObserver<List<CityBean>>() {
-            @Override
-            public void onNext(List<CityBean> cityBeenList) {
-                mGetCityBtn.setText(cityBeenList.get(0).getId());
-            }
-        });
-    }
-
-    private void getCountyData() {
-
     }
 }

@@ -1,7 +1,7 @@
 package com.example.administrator.myweather.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
-import com.example.administrator.myweather.activity.ChooseProvinceActivity;
+import com.example.administrator.myweather.activity.ChooseAreaActivity;
 import com.example.administrator.myweather.db.CityEntity;
-import com.example.administrator.myweather.db.ProvinceEntity;
-import com.example.administrator.myweather.util.ActivityUtil;
+import com.example.administrator.myweather.fragment.ChooseAreaFragment;
+import com.example.administrator.myweather.util.FragmentUtil;
 
 import java.util.List;
 
@@ -39,13 +39,15 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(CityAdapter.ViewHolder holder, final int position) {
-        holder.mNameTv.setText(mCityEntityList.get(position).getMCityName());
+    public void onBindViewHolder(CityAdapter.ViewHolder holder, int position) {
+        final CityEntity cityEntity = mCityEntityList.get(position);
+        holder.mNameTv.setText(cityEntity.getMCityName());
         holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityUtil.goChooseProvinceActivity(mContext, ChooseProvinceActivity.CHOOSE_TYPE_COUNTY,
-                        mCityEntityList.get(position).getMCityId());
+                ChooseAreaFragment chooseAreaFragment = ChooseAreaFragment.newInstance(ChooseAreaActivity.CHOOSE_TYPE_COUNTY,
+                        cityEntity.getMCityId());
+                FragmentUtil.replaceAreaFragment((AppCompatActivity) mContext, R.id.container, chooseAreaFragment, true);
             }
         });
     }
