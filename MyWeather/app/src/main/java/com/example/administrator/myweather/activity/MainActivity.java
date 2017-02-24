@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
-import com.example.administrator.myweather.constant.SharedPreferenceKeyConstant;
+import com.example.administrator.myweather.constant.Constants;
 import com.example.administrator.myweather.gson.WeatherBean;
 import com.example.administrator.myweather.internet.DefaultObserver;
 import com.example.administrator.myweather.internet.RetrofitManager;
@@ -90,8 +90,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         switch (requestCode) {
             case REQUEST_CODE_FOR_CHOOSEAREA:
                 if (resultCode == RESULT_OK) {
-                    if (data != null && !mWeatherId.equals(data.getStringExtra(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID))) {
-                        mWeatherId = data.getStringExtra(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID);
+                    if (data != null && !mWeatherId.equals(data.getStringExtra(Constants.SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID))) {
+                        mWeatherId = data.getStringExtra(Constants.SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID);
                         loadWeatherData();
                     }
                 }

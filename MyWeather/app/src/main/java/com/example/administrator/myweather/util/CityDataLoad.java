@@ -5,7 +5,7 @@ import android.content.res.AssetManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.administrator.myweather.constant.FileConstant;
+import com.example.administrator.myweather.constant.Constants;
 import com.example.administrator.myweather.db.CityEntity;
 import com.example.administrator.myweather.db.CountyEntity;
 import com.example.administrator.myweather.db.DBManager;
@@ -35,7 +35,7 @@ public class CityDataLoad {
 
         //读取省份数据
         try {
-            InputStream inputStream = assetManager.open(FileConstant.PROVINCE_FILE_NAME);
+            InputStream inputStream = assetManager.open(Constants.FileConstant.PROVINCE_FILE_NAME);
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader((inputStreamReader));
             String content;
@@ -51,7 +51,7 @@ public class CityDataLoad {
 
         //读取市数据
         try {
-            InputStream inputStream = assetManager.open(FileConstant.CITY_FILE_NAME);
+            InputStream inputStream = assetManager.open(Constants.FileConstant.CITY_FILE_NAME);
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader((inputStreamReader));
             String content;
@@ -67,7 +67,7 @@ public class CityDataLoad {
 
         //读取县数据
         try {
-            InputStream inputStream = assetManager.open(FileConstant.COUNTY_FILE_NAME);
+            InputStream inputStream = assetManager.open(Constants.FileConstant.COUNTY_FILE_NAME);
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader((inputStreamReader));
             String content;

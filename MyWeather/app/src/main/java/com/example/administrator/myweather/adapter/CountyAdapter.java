@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.myweather.R;
-import com.example.administrator.myweather.constant.SharedPreferenceKeyConstant;
+import com.example.administrator.myweather.constant.Constants;
 import com.example.administrator.myweather.db.CountyEntity;
 import com.example.administrator.myweather.util.ActivityUtil;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
@@ -47,10 +47,10 @@ public class CountyAdapter extends RecyclerView.Adapter<CountyAdapter.ViewHolder
         holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferenceHelper.getInstance().putString(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID,
+                SharedPreferenceHelper.getInstance().putString(Constants.SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID,
                         countyEntity.getMWeatherId());
                 Intent intent = new Intent();
-                intent.putExtra(SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID, countyEntity.getMWeatherId());
+                intent.putExtra(Constants.SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID, countyEntity.getMWeatherId());
                 ((AppCompatActivity)mContext).setResult(Activity.RESULT_OK, intent);
                 ((AppCompatActivity)mContext).finish();
                 ActivityUtil.finishAnim((AppCompatActivity) mContext);

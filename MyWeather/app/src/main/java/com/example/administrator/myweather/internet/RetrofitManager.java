@@ -1,5 +1,6 @@
 package com.example.administrator.myweather.internet;
 
+import com.example.administrator.myweather.constant.Constants;
 import com.example.administrator.myweather.gson.WeatherBean;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -29,7 +30,7 @@ public class RetrofitManager {
         Retrofit retrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(ApiConstant.URL).build();
+                .baseUrl(Constants.ApiConstant.URL).build();
         mHttpService = retrofit.create(HttpService.class);
     }
 
@@ -50,7 +51,7 @@ public class RetrofitManager {
      * @param observer 回调
      */
     public void getWeather(String weatherId, Observer<WeatherBean> observer) {
-        defaultSchedule(mHttpService.getWeatherInfo(weatherId, ApiConstant.WEATHER_KRY), observer);
+        defaultSchedule(mHttpService.getWeatherInfo(weatherId, Constants.ApiConstant.WEATHER_KRY), observer);
     }
 
 
