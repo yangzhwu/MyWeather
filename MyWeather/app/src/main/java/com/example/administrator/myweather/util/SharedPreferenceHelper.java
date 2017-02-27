@@ -45,9 +45,4 @@ public class SharedPreferenceHelper {
         editor.putString(key, value);
         editor.apply();
     }
-
-    public String getString(String key, String defaultvalue) {
-        return mSharedPreferences.getString(key, defaultvalue);
-    }
-
 }
