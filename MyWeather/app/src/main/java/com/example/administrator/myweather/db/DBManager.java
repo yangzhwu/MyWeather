@@ -56,13 +56,6 @@ public class DBManager {
         return provinceEntityDao.loadAll();
     }
 
-    public List<CityEntity> queryCityList() {
-        DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
-        DaoSession daoSession = daoMaster.newSession();
-        CityEntityDao cityEntityDao = daoSession.getCityEntityDao();
-        return cityEntityDao.loadAll();
-    }
-
     public List<CityEntity> queryCityListByProvinceId(String provinceId) {
         DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
         DaoSession daoSession = daoMaster.newSession();
@@ -70,13 +63,6 @@ public class DBManager {
         Query<CityEntity> query = cityEntityDao.queryBuilder().where(CityEntityDao.Properties.MProvinceId.eq(provinceId))
                 .build();
         return query.list();
-    }
-
-    public List<CountyEntity> queryCountyList() {
-        DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
-        DaoSession daoSession = daoMaster.newSession();
-        CountyEntityDao countyEntityDao = daoSession.getCountyEntityDao();
-        return countyEntityDao.loadAll();
     }
 
     public List<CountyEntity> queryCountyListByCityId(String cityId) {
@@ -87,6 +73,13 @@ public class DBManager {
         return query.list();
     }
 
+    public List<CountyEntity> queryCountyListByCountyName(String countyName) {
+        DaoMaster daoMaster = new DaoMaster(mDevOpenHelper.getReadableDatabase());
+        DaoSession daoSession = daoMaster.newSession();
+        CountyEntityDao countyEntityDao = daoSession.getCountyEntityDao();
+        Query<CountyEntity> query = countyEntityDao.queryBuilder().where(CountyEntityDao.Properties.MCountyName.eq(countyName)).build();
+        return query.list();
+    }
 
     /**
      * 插入市数据

@@ -1,20 +1,21 @@
 package com.example.administrator.myweather.internet;
 
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.administrator.myweather.BuildConfig;
 import com.example.administrator.myweather.constant.Constants;
 import com.example.administrator.myweather.gson.WeatherBean;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -34,20 +35,26 @@ public class RetrofitManager {
     }
 
     private void initRetrofit() {
-        //初始化okhttpclient
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Response response = chain.proceed(chain.request());
-                        String s = response.body().string();
-                        Log.e("response", s);
-                        return  response;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        //debug模式下打印网络日志
+        if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(String message) {
+                    if (!TextUtils.isEmpty(message)) {
+                        Log.e("response", message);
                     }
-                }).build();
+                }
+            });
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(loggingInterceptor);
+        }
+        //设置连接超时
+        builder.connectTimeout(2, TimeUnit.SECONDS);
+
         //配置retrofit
         Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
+                .client(builder.build())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(Constants.ApiConstant.URL).build();

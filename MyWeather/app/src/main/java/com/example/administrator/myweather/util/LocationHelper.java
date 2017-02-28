@@ -10,6 +10,9 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.example.administrator.myweather.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by zhengwuy on 2017/2/27.
  * Emali: 963460692@qq.com
@@ -20,9 +23,11 @@ public class LocationHelper {
     private Context mContext;
     private boolean isLocating;
     private static LocationHelper mInstance;
+    private List<LocationChangeListener> mLocationChangeListenerList;
 
     private LocationHelper(Context context) {
         mContext = context;
+        mLocationChangeListenerList = new ArrayList<>();
     }
 
     public static void init(Context context) {
@@ -57,10 +62,11 @@ public class LocationHelper {
                     isLocating = false;
                     //定位成功
                     if (aMapLocation.getErrorCode() == 0) {
-                        Log.e("City Code", aMapLocation.getCityCode() + " " +
-                                aMapLocation.getDistrict() + " " +
-                                aMapLocation.getAdCode());
-
+                        if (!mLocationChangeListenerList.isEmpty()) {
+                            for (LocationChangeListener locationChangeListener : mLocationChangeListenerList) {
+                                locationChangeListener.locationChange(aMapLocation);
+                            }
+                        }
                     } else {
                         Toast.makeText(mContext, "location failed", Toast.LENGTH_SHORT).show();
                     }
@@ -68,12 +74,23 @@ public class LocationHelper {
                     aMapLocationClient.onDestroy();
                 }
             });
-
             aMapLocationClient.startLocation();
-
         }
-
     }
 
+    public interface LocationChangeListener {
+        void locationChange(AMapLocation aMapLocation);
+    }
 
+    public void registerLocationChangeListener(LocationChangeListener listener) {
+        if (listener != null) {
+            mLocationChangeListenerList.add(listener);
+        }
+    }
+
+    public void unregisterLocationChangeListener(LocationChangeListener listener) {
+        if (listener != null) {
+            mLocationChangeListenerList.remove(listener);
+        }
+    }
 }
