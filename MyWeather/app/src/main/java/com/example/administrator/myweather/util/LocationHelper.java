@@ -21,12 +21,12 @@ import java.util.List;
 
 public class LocationHelper {
     private Context mContext;
-    private boolean isLocating;
+    private volatile boolean isLocating;
     private static LocationHelper mInstance;
     private List<LocationChangeListener> mLocationChangeListenerList;
 
     private LocationHelper(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         mLocationChangeListenerList = new ArrayList<>();
     }
 
@@ -68,6 +68,7 @@ public class LocationHelper {
                             }
                         }
                     } else {
+                        LogUtil.e("ERRCODE", aMapLocation.getErrorCode() + " " + aMapLocation.getErrorInfo());
                         Toast.makeText(mContext, "location failed", Toast.LENGTH_SHORT).show();
                     }
                     aMapLocationClient.stopLocation();

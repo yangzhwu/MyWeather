@@ -68,17 +68,17 @@ public class ChooseAreaFragment extends Fragment {
     private void initAdapter() {
         switch (mCurrentMode) {
             case ChooseAreaActivity.CHOOSE_TYPE_PROVINCE:
-                List<ProvinceEntity> provinceEntityList = DBManager.getInstance().queryProvinceList();
+                List<ProvinceEntity> provinceEntityList = DBManager.getInstance(getContext()).queryProvinceList();
                 ProvinceAdapter provinceAdapter = new ProvinceAdapter(getActivity(), provinceEntityList);
                 mRecyclerView.setAdapter(provinceAdapter);
                 break;
             case ChooseAreaActivity.CHOOSE_TYPE_CITY:
-                List<CityEntity> cityEntityList = DBManager.getInstance().queryCityListByProvinceId(mID);
+                List<CityEntity> cityEntityList = DBManager.getInstance(getContext()).queryCityListByProvinceId(mID);
                 CityAdapter cityAdapter = new CityAdapter(getActivity(), cityEntityList);
                 mRecyclerView.setAdapter(cityAdapter);
                 break;
             case ChooseAreaActivity.CHOOSE_TYPE_COUNTY:
-                List<CountyEntity> countyEntityList = DBManager.getInstance().queryCountyListByCityId(mID);
+                List<CountyEntity> countyEntityList = DBManager.getInstance(getContext()).queryCountyListByCityId(mID);
                 CountyAdapter countyAdapter = new CountyAdapter(getActivity(), countyEntityList);
                 mRecyclerView.setAdapter(countyAdapter);
                 break;

@@ -16,6 +16,7 @@ import com.example.administrator.myweather.constant.Constants;
 import com.example.administrator.myweather.db.DBManager;
 import com.example.administrator.myweather.util.CityDataLoad;
 import com.example.administrator.myweather.util.LocationHelper;
+import com.example.administrator.myweather.util.LogUtil;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
 
 
@@ -31,8 +32,11 @@ public class WeatherApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        DBManager.init(this);
         SharedPreferenceHelper.init(this);
         LocationHelper.init(this);
+
+        if (BuildConfig.DEBUG) {
+            LogUtil.setLogLeve(LogUtil.LOG_LEVEL_D);
+        }
     }
 }

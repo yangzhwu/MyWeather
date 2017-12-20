@@ -37,14 +37,14 @@ public class CityDataLoad {
         try {
             InputStream inputStream = assetManager.open(Constants.FileConstant.PROVINCE_FILE_NAME);
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader((inputStreamReader));
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String content;
             List<ProvinceEntity> provinceEntityList = new ArrayList<>();
             while (!TextUtils.isEmpty(content = bufferedReader.readLine())) {
                 ProvinceEntity provinceEntity = gson.fromJson(content, ProvinceEntity.class);
                 provinceEntityList.add(provinceEntity);
             }
-            DBManager.getInstance().insertProvinceList(provinceEntityList);
+            DBManager.getInstance(context).insertProvinceList(provinceEntityList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,7 +60,7 @@ public class CityDataLoad {
                 CityEntity cityEntity = gson.fromJson(content, CityEntity.class);
                 cityEntityList.add(cityEntity);
             }
-            DBManager.getInstance().insertCityList(cityEntityList);
+            DBManager.getInstance(context).insertCityList(cityEntityList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,7 +76,7 @@ public class CityDataLoad {
                 CountyEntity countyEntity = gson.fromJson(content, CountyEntity.class);
                 countyEntityList.add(countyEntity);
             }
-            DBManager.getInstance().insertCountyList(countyEntityList);
+            DBManager.getInstance(context).insertCountyList(countyEntityList);
         } catch (IOException e) {
             e.printStackTrace();
         }

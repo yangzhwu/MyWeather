@@ -25,6 +25,7 @@ import com.example.administrator.myweather.internet.RetrofitManager;
 import com.example.administrator.myweather.util.ActivityUtil;
 import com.example.administrator.myweather.util.DialogUtil;
 import com.example.administrator.myweather.util.LocationHelper;
+import com.example.administrator.myweather.util.LogUtil;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
 
 import java.util.List;
@@ -137,9 +138,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void locationChange(AMapLocation aMapLocation) {
         String city = aMapLocation.getCity();
+        LogUtil.e("City", city + " " + aMapLocation.getCityCode());
         if (city.contains("市")) {
             city = city.substring(0, city.length() - 1);
-            List<CountyEntity> list = DBManager.getInstance().queryCountyListByCountyName(city);
+            List<CountyEntity> list = DBManager.getInstance(this).queryCountyListByCountyName(city);
             if (!list.isEmpty()) {
                 final CountyEntity countyEntity = list.get(0);
                 if (!countyEntity.getMCityId().equals(mCityId)) {
