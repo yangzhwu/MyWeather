@@ -18,6 +18,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zhengwuy on 2017/2/20.
@@ -29,57 +37,65 @@ public class CityDataLoad {
     private final static String TAG = "CityDataLoad";
 
 
-    public static void loadCityData(Context context) {
+    public static void loadCityData(Context context, Observer<Boolean> observer) {
+        Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+            loadData(context);
+            e.onComplete();
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(observer);
+    }
+
+    public static Observable<Boolean> loadCityData(Context context) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                loadData(context);
+                e.onNext(true);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io());
+    }
+
+    /**
+     * 加载城市信息到数据库的具体逻辑
+     * @param context 上下文
+     * @throws Exception 异常
+     */
+    private static void loadData(Context context) throws Exception{
         AssetManager assetManager = context.getAssets();
         Gson gson = new Gson();
 
-        //读取省份数据
-        try {
-            InputStream inputStream = assetManager.open(Constants.FileConstant.PROVINCE_FILE_NAME);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String content;
-            List<ProvinceEntity> provinceEntityList = new ArrayList<>();
-            while (!TextUtils.isEmpty(content = bufferedReader.readLine())) {
-                ProvinceEntity provinceEntity = gson.fromJson(content, ProvinceEntity.class);
-                provinceEntityList.add(provinceEntity);
-            }
-            DBManager.getInstance(context).insertProvinceList(provinceEntityList);
-        } catch (IOException e) {
-            e.printStackTrace();
+        InputStream inputStreamProvince = assetManager.open(Constants.FileConstant.PROVINCE_FILE_NAME);
+        InputStreamReader inputStreamReaderProvince = new InputStreamReader(inputStreamProvince);
+        BufferedReader bufferedReaderProvince = new BufferedReader(inputStreamReaderProvince);
+        String contentProvince;
+        List<ProvinceEntity> provinceEntityList = new ArrayList<>();
+        while (!TextUtils.isEmpty(contentProvince = bufferedReaderProvince.readLine())) {
+            ProvinceEntity provinceEntity = gson.fromJson(contentProvince, ProvinceEntity.class);
+            LogUtil.e("id", provinceEntity.getId() + "");
+            provinceEntityList.add(provinceEntity);
         }
+        DBManager.getInstance(context).insertProvinceList(provinceEntityList);
 
-        //读取市数据
-        try {
-            InputStream inputStream = assetManager.open(Constants.FileConstant.CITY_FILE_NAME);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader((inputStreamReader));
-            String content;
-            List<CityEntity> cityEntityList = new ArrayList<>();
-            while (!TextUtils.isEmpty(content = bufferedReader.readLine())) {
-                CityEntity cityEntity = gson.fromJson(content, CityEntity.class);
-                cityEntityList.add(cityEntity);
-            }
-            DBManager.getInstance(context).insertCityList(cityEntityList);
-        } catch (IOException e) {
-            e.printStackTrace();
+        InputStream inputStreamCity = assetManager.open(Constants.FileConstant.CITY_FILE_NAME);
+        InputStreamReader inputStreamReaderCity = new InputStreamReader(inputStreamCity);
+        BufferedReader bufferedReaderCity = new BufferedReader((inputStreamReaderCity));
+        String contentCity;
+        List<CityEntity> cityEntityList = new ArrayList<>();
+        while (!TextUtils.isEmpty(contentCity = bufferedReaderCity.readLine())) {
+            CityEntity cityEntity = gson.fromJson(contentCity, CityEntity.class);
+            cityEntityList.add(cityEntity);
         }
+        DBManager.getInstance(context).insertCityList(cityEntityList);
 
-        //读取县数据
-        try {
-            InputStream inputStream = assetManager.open(Constants.FileConstant.COUNTY_FILE_NAME);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader((inputStreamReader));
-            String content;
-            List<CountyEntity> countyEntityList = new ArrayList<>();
-            while (!TextUtils.isEmpty(content = bufferedReader.readLine())) {
-                CountyEntity countyEntity = gson.fromJson(content, CountyEntity.class);
-                countyEntityList.add(countyEntity);
-            }
-            DBManager.getInstance(context).insertCountyList(countyEntityList);
-        } catch (IOException e) {
-            e.printStackTrace();
+        InputStream inputStreamCounty = assetManager.open(Constants.FileConstant.COUNTY_FILE_NAME);
+        InputStreamReader inputStreamReaderCounty = new InputStreamReader(inputStreamCounty);
+        BufferedReader bufferedReaderCounty = new BufferedReader((inputStreamReaderCounty));
+        String contentCounty;
+        List<CountyEntity> countyEntityList = new ArrayList<>();
+        while (!TextUtils.isEmpty(contentCounty = bufferedReaderCounty.readLine())) {
+            CountyEntity countyEntity = gson.fromJson(contentCounty, CountyEntity.class);
+            countyEntityList.add(countyEntity);
         }
-        Log.e(TAG, "load complete");
+        DBManager.getInstance(context).insertCountyList(countyEntityList);
     }
 }

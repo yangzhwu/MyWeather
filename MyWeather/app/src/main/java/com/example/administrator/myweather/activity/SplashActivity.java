@@ -7,17 +7,33 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.administrator.myweather.LocalCache.DataCache;
 import com.example.administrator.myweather.R;
 import com.example.administrator.myweather.constant.Constants;
+import com.example.administrator.myweather.gson.NowDataBean;
+import com.example.administrator.myweather.gson.SuggestionDataBean;
+import com.example.administrator.myweather.gson.WeatherBean;
+import com.example.administrator.myweather.rxjava.ErrorCompleteObserver;
 import com.example.administrator.myweather.util.ActivityUtil;
 import com.example.administrator.myweather.util.CityDataLoad;
+import com.example.administrator.myweather.util.FileUtil;
 import com.example.administrator.myweather.util.LocationHelper;
+import com.example.administrator.myweather.util.LogUtil;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function3;
+import io.reactivex.functions.Function4;
 
 public class SplashActivity extends BaseActivity {
+    private static final String TAG = "SplashActivity";
     private static final int REQUEST_PERMISSION_CODE = 100;
 
 
@@ -27,7 +43,6 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
 
         initData();
-        initLocation();
     }
 
     /**
@@ -40,6 +55,13 @@ public class SplashActivity extends BaseActivity {
                 .getBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, false);
         if (!hasLoadData) {
             loadData();
+        } else {
+            boolean isLoadWeather = DataCache.getInstance().getLoad();
+            if (!isLoadWeather) {
+                loadWeatherData();
+            } else {
+                startLocation();
+            }
         }
     }
 
@@ -47,14 +69,62 @@ public class SplashActivity extends BaseActivity {
      * 从文件中加载城市相关的数据
      */
     private void loadData() {
-        CityDataLoad.loadCityData(this);
-        SharedPreferenceHelper.getInstance().putBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, true);
+        LogUtil.d(TAG, "开始加载本地数据");
+        CityDataLoad.loadCityData(this, new Observer<Boolean>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Boolean aBoolean) {
+                LogUtil.e(TAG, "onNext");
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+               LogUtil.e(TAG, e.toString());
+            }
+
+            @Override
+            public void onComplete() {
+                SharedPreferenceHelper.getInstance().putBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, true);
+                startLocation();
+                LogUtil.e(TAG, "onComplete");
+
+            }
+        });
+//        Observable.zip(CityDataLoad.loadCityData(this), FileUtil.readBeanInfo(NowDataBean.class), FileUtil.readBeanInfo(SuggestionDataBean.class), FileUtil.readBeanInfo(WeatherBean.class),
+//                (aBoolean, nowDataBean, suggestionDataBean, weatherBean) -> {
+//                    LogUtil.d(TAG, "加载本地数据完成");
+//                    SharedPreferenceHelper.getInstance().putBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, true);
+//                    setCache(nowDataBean, suggestionDataBean, weatherBean);
+//                    startLocation();
+//                    return true;
+//                }).subscribe();
+    }
+
+    private void loadWeatherData() {
+        Observable.zip(FileUtil.readBeanInfo(NowDataBean.class), FileUtil.readBeanInfo(SuggestionDataBean.class), FileUtil.readBeanInfo(WeatherBean.class),
+                (nowDataBean, suggestionDataBean, weatherBean) -> {
+                    setCache(nowDataBean, suggestionDataBean, weatherBean);
+                    startLocation();
+                    return true;
+                }).subscribe();
+    }
+
+    private void setCache(NowDataBean nowDataBean, SuggestionDataBean suggestionDataBean, WeatherBean weatherBean) {
+        DataCache.getInstance().setNowDataBean(nowDataBean);
+        DataCache.getInstance().setSuggestionDataBean(suggestionDataBean);
+        DataCache.getInstance().setWeatherBean(weatherBean);
+        DataCache.getInstance().setLoad(true);
     }
 
     /**
      * 初始化定位，android6.0首先应该先判断权限，已经申请过的权限不需要再次申请
      */
-    private void initLocation() {
+    private void startLocation() {
         List<String> permissionList = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

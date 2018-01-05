@@ -1,5 +1,7 @@
 package com.example.administrator.myweather.internet;
 
+import com.example.administrator.myweather.gson.NowDataBean;
+import com.example.administrator.myweather.gson.SuggestionDataBean;
 import com.example.administrator.myweather.gson.WeatherBean;
 
 import io.reactivex.Observable;
@@ -14,6 +16,13 @@ import retrofit2.http.Query;
 
 public interface HttpService {
 
-    @GET("weather")
-    Observable<WeatherBean> getWeatherInfo(@Query("cityid") String cityId, @Query("key") String key);
+    @GET("s6/weather/forecast")
+    Observable<WeatherBean> getWeatherInfo(@Query("location") String location, @Query("key") String key);
+
+
+    @GET("v5/suggestion")
+    Observable<SuggestionDataBean> getSuggestionInfo(@Query("city") String location, @Query("key") String key);
+
+    @GET("v5/now")
+    Observable<NowDataBean> getNowInfo(@Query("city") String location, @Query("key") String key);
 }

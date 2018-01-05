@@ -2,9 +2,11 @@ package com.example.administrator.myweather;
 
 import android.Manifest;
 import android.app.Application;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,9 +17,16 @@ import com.amap.api.location.AMapLocationListener;
 import com.example.administrator.myweather.constant.Constants;
 import com.example.administrator.myweather.db.DBManager;
 import com.example.administrator.myweather.util.CityDataLoad;
+import com.example.administrator.myweather.util.FileUtil;
 import com.example.administrator.myweather.util.LocationHelper;
 import com.example.administrator.myweather.util.LogUtil;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Method;
 
 
 /**
@@ -34,6 +43,7 @@ public class WeatherApplication extends Application {
 
         SharedPreferenceHelper.init(this);
         LocationHelper.init(this);
+        FileUtil.init(this);
 
         if (BuildConfig.DEBUG) {
             LogUtil.setLogLeve(LogUtil.LOG_LEVEL_D);

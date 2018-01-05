@@ -13,7 +13,7 @@ import org.greenrobot.greendao.annotation.Generated;
 @Entity
 public class ProvinceEntity {
 
-    @Id(autoincrement = true)
+    @Id
     private Long id;
 
     private String mProvinceId;

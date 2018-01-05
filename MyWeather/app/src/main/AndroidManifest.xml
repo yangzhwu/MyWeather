@@ -40,7 +40,8 @@
 
         <activity
             android:name=".activity.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/MyAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -50,13 +51,15 @@
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/MyAppTheme"
             android:launchMode="singleTask"/>
         <activity
             android:name=".activity.ChooseAreaActivity"
             android:label="@string/choose_province"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.BaseActivity">
+        <activity android:name=".activity.BaseActivity"
+            android:theme="@style/MyAppTheme">
         </activity>
     </application>
 

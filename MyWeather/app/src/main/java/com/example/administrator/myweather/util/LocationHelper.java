@@ -64,12 +64,16 @@ public class LocationHelper {
                     if (aMapLocation.getErrorCode() == 0) {
                         if (!mLocationChangeListenerList.isEmpty()) {
                             for (LocationChangeListener locationChangeListener : mLocationChangeListenerList) {
-                                locationChangeListener.locationChange(aMapLocation);
+                                locationChangeListener.locationSucess(aMapLocation);
                             }
                         }
                     } else {
                         LogUtil.e("ERRCODE", aMapLocation.getErrorCode() + " " + aMapLocation.getErrorInfo());
-                        Toast.makeText(mContext, "location failed", Toast.LENGTH_SHORT).show();
+                        if (!mLocationChangeListenerList.isEmpty()) {
+                            for (LocationChangeListener locationChangeListener : mLocationChangeListenerList) {
+                                locationChangeListener.locationFailed(aMapLocation);
+                            }
+                        }
                     }
                     aMapLocationClient.stopLocation();
                     aMapLocationClient.onDestroy();
@@ -80,7 +84,11 @@ public class LocationHelper {
     }
 
     public interface LocationChangeListener {
-        void locationChange(AMapLocation aMapLocation);
+        //定位成功
+        void locationSucess(AMapLocation aMapLocation);
+
+        //定位失败
+        void locationFailed(AMapLocation aMapLocation);
     }
 
     public void registerLocationChangeListener(LocationChangeListener listener) {

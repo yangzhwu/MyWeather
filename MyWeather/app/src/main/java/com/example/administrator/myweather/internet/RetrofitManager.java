@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.example.administrator.myweather.BuildConfig;
 import com.example.administrator.myweather.constant.Constants;
+import com.example.administrator.myweather.gson.NowDataBean;
+import com.example.administrator.myweather.gson.SuggestionDataBean;
 import com.example.administrator.myweather.gson.WeatherBean;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -26,8 +28,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitManager {
-
+    private static final int CONNECT_TIME_OUT = 5;
+    private static final int READ_TIME_OUT = 5;
     private static RetrofitManager mRetrofitManager;
+    private static final int RETRY_TIMES = 3;
     private HttpService mHttpService;
 
     private RetrofitManager() {
@@ -38,19 +42,21 @@ public class RetrofitManager {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //debug模式下打印网络日志
         if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                @Override
-                public void log(String message) {
-                    if (!TextUtils.isEmpty(message)) {
-                        Log.e("response", message);
-                    }
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
+                if (!TextUtils.isEmpty(message)) {
+                    Log.d("response", message);
                 }
             });
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(loggingInterceptor);
         }
-        //设置连接超时
-        builder.connectTimeout(2, TimeUnit.SECONDS);
+        //设置超时
+        builder.connectTimeout(CONNECT_TIME_OUT, TimeUnit.SECONDS);
+        builder.readTimeout(READ_TIME_OUT, TimeUnit.SECONDS);
+        //https验证
+        builder.hostnameVerifier((hostname, session) -> true);
+        MyTrustManager myTrustManager = new MyTrustManager();
+        builder.sslSocketFactory(myTrustManager.getSSLContext().getSocketFactory(), myTrustManager.getX509TrustManager());
 
         //配置retrofit
         Retrofit retrofit = new Retrofit.Builder()
@@ -74,11 +80,26 @@ public class RetrofitManager {
 
     /**
      * 获取天气信息
-     * @param weatherId weatherId
-     * @param observer 回调
+     * @param location location
      */
-    public void getWeather(String weatherId, Observer<WeatherBean> observer) {
-        defaultSchedule(mHttpService.getWeatherInfo(weatherId, Constants.ApiConstant.WEATHER_KRY), observer);
+    public Observable<WeatherBean> getWeather(String location) {
+        return mHttpService.getWeatherInfo(location, Constants.ApiConstant.WEATHER_KRY).retry(RETRY_TIMES).subscribeOn(Schedulers.io()).observeOn(A);
+    }
+
+    /**
+     * 获取生活建议
+     * @param location 位置信息
+     */
+    public Observable<SuggestionDataBean> getSuggestion(String location) {
+        return mHttpService.getSuggestionInfo(location, Constants.ApiConstant.WEATHER_KRY).retry(RETRY_TIMES).subscribeOn(Schedulers.io());
+    }
+
+    /**
+     * 获取实况天气
+     * @param location 位置信息
+     */
+    public Observable<NowDataBean> getNow(String location) {
+        return mHttpService.getNowInfo(location, Constants.ApiConstant.WEATHER_KRY).retry(RETRY_TIMES).subscribeOn(Schedulers.io());
     }
 
 
