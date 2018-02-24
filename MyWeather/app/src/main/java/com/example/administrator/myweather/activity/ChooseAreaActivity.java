@@ -28,7 +28,7 @@ public class ChooseAreaActivity extends AppCompatActivity {
      * 初始化view
      */
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
