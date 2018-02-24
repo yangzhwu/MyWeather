@@ -30,7 +30,7 @@ public class SharedPreferenceHelper {
         return mInstance;
     }
 
-    public void putBoolean(String key, Boolean value) {
+    void putBoolean(String key, Boolean value) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
@@ -48,5 +48,15 @@ public class SharedPreferenceHelper {
 
     public String getString(String key, String defaultValue) {
         return mSharedPreferences.getString(key, defaultValue);
+    }
+
+    public long getLong(String key, long defaultvalue) {
+        return mSharedPreferences.getLong(key, defaultvalue);
+    }
+
+    public void putLong(String key, long value) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putLong(key, value);
+        editor.apply();
     }
 }

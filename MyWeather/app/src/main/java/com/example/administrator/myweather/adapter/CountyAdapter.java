@@ -51,6 +51,7 @@ public class CountyAdapter extends RecyclerView.Adapter<CountyAdapter.ViewHolder
                         countyEntity.getMWeatherId());
                 Intent intent = new Intent();
                 intent.putExtra(Constants.SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_WEATHER_ID, countyEntity.getMWeatherId());
+                intent.putExtra(Constants.SharedPreferenceKeyConstant.KEY_CHOOSE_COUNTY_NAME, countyEntity.getMCountyName());
                 ((AppCompatActivity)mContext).setResult(Activity.RESULT_OK, intent);
                 ((AppCompatActivity)mContext).finish();
                 ActivityUtil.finishAnim((AppCompatActivity) mContext);

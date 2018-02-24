@@ -27,10 +27,12 @@ import java.util.function.BiFunction;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function3;
 import io.reactivex.functions.Function4;
+import io.reactivex.schedulers.Schedulers;
 
 public class SplashActivity extends BaseActivity {
     private static final String TAG = "SplashActivity";
@@ -55,13 +57,13 @@ public class SplashActivity extends BaseActivity {
                 .getBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, false);
         if (!hasLoadData) {
             loadData();
+        }
+        boolean isLoadWeather = DataCache.getInstance().getLoad();
+        if (!isLoadWeather) {
+            LogUtil.d(TAG, "loadweather");
+            loadWeatherData();
         } else {
-            boolean isLoadWeather = DataCache.getInstance().getLoad();
-            if (!isLoadWeather) {
-                loadWeatherData();
-            } else {
-                startLocation();
-            }
+            checkLocationPermission();
         }
     }
 
@@ -69,49 +71,27 @@ public class SplashActivity extends BaseActivity {
      * 从文件中加载城市相关的数据
      */
     private void loadData() {
-        LogUtil.d(TAG, "开始加载本地数据");
-        CityDataLoad.loadCityData(this, new Observer<Boolean>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(Boolean aBoolean) {
-                LogUtil.e(TAG, "onNext");
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-               LogUtil.e(TAG, e.toString());
-            }
-
-            @Override
-            public void onComplete() {
-                SharedPreferenceHelper.getInstance().putBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, true);
-                startLocation();
-                LogUtil.e(TAG, "onComplete");
-
-            }
-        });
-//        Observable.zip(CityDataLoad.loadCityData(this), FileUtil.readBeanInfo(NowDataBean.class), FileUtil.readBeanInfo(SuggestionDataBean.class), FileUtil.readBeanInfo(WeatherBean.class),
-//                (aBoolean, nowDataBean, suggestionDataBean, weatherBean) -> {
-//                    LogUtil.d(TAG, "加载本地数据完成");
-//                    SharedPreferenceHelper.getInstance().putBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, true);
-//                    setCache(nowDataBean, suggestionDataBean, weatherBean);
-//                    startLocation();
-//                    return true;
-//                }).subscribe();
+        CityDataLoad.loadCityData(this);
     }
 
     private void loadWeatherData() {
         Observable.zip(FileUtil.readBeanInfo(NowDataBean.class), FileUtil.readBeanInfo(SuggestionDataBean.class), FileUtil.readBeanInfo(WeatherBean.class),
                 (nowDataBean, suggestionDataBean, weatherBean) -> {
                     setCache(nowDataBean, suggestionDataBean, weatherBean);
-                    startLocation();
                     return true;
-                }).subscribe();
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new ErrorCompleteObserver<Boolean>() {
+            @Override
+            public void onError(Throwable e) {
+                LogUtil.d(TAG, "weather error");
+                checkLocationPermission();
+            }
+
+            @Override
+            public void onComplete() {
+                LogUtil.d(TAG, "weather complete");
+                checkLocationPermission();
+            }
+        });
     }
 
     private void setCache(NowDataBean nowDataBean, SuggestionDataBean suggestionDataBean, WeatherBean weatherBean) {
@@ -124,7 +104,7 @@ public class SplashActivity extends BaseActivity {
     /**
      * 初始化定位，android6.0首先应该先判断权限，已经申请过的权限不需要再次申请
      */
-    private void startLocation() {
+    private void checkLocationPermission() {
         List<String> permissionList = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -145,10 +125,10 @@ public class SplashActivity extends BaseActivity {
             if (!permissionList.isEmpty()) {
                 requestPermissions(permissionList.toArray(new String[permissionList.size()]), REQUEST_PERMISSION_CODE);
             } else {
-                //开始定位
-                LocationHelper.getInstance().startLocation();
                 startMainActivity();
             }
+        } else {
+            startMainActivity();
         }
     }
 
@@ -156,16 +136,6 @@ public class SplashActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION_CODE:
-                for (int grantResult : grantResults) {
-                    if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                        //没有授权，取消定位
-                        Log.e("location", "no permission");
-                        return;
-                    }
-                }
-                //// TODO: 2017/2/27 开始定位
-                Log.e("location", "start_location");
-                LocationHelper.getInstance().startLocation();
                 startMainActivity();
                 break;
             default:

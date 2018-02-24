@@ -34,7 +34,6 @@ public class FileUtil {
      */
     public static void saveBeanInfo(Class<?> cls, Object beanInfo) {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            LogUtil.e("thread save", Thread.currentThread().getName());
             String fileName = cls.getSimpleName();
             File file = new File(sApplication.getFilesDir(), fileName);
             if (file.exists()) {
@@ -55,7 +54,7 @@ public class FileUtil {
             if (aBoolean) {
                 LogUtil.d(TAG, "文件成功写入");
             } else {
-                LogUtil.d(TAG, "文件操作失败");
+                LogUtil.e(TAG, "文件操作失败");
             }
         });
     }
@@ -87,13 +86,17 @@ public class FileUtil {
      */
     public static <T> Observable<T> readBeanInfo(Class<T> cls) {
         return Observable.create((ObservableOnSubscribe<T>) e -> {
+            LogUtil.d(TAG, cls.getSimpleName());
             String fileName = cls.getSimpleName();
             File file = new File(sApplication.getFilesDir(), fileName);
             if (file.exists()) {
                 ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
                 Object object = objectInputStream.readObject();
                 e.onNext((T) object);
+                e.onComplete();
+            } else {
+                e.onComplete();
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 }

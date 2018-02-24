@@ -83,7 +83,7 @@ public class RetrofitManager {
      * @param location location
      */
     public Observable<WeatherBean> getWeather(String location) {
-        return mHttpService.getWeatherInfo(location, Constants.ApiConstant.WEATHER_KRY).retry(RETRY_TIMES).subscribeOn(Schedulers.io()).observeOn(A);
+        return mHttpService.getWeatherInfo(location, Constants.ApiConstant.WEATHER_KRY).retry(RETRY_TIMES).subscribeOn(Schedulers.io());
     }
 
     /**

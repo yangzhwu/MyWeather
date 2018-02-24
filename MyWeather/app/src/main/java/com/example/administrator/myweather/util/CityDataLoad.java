@@ -10,6 +10,7 @@ import com.example.administrator.myweather.db.CityEntity;
 import com.example.administrator.myweather.db.CountyEntity;
 import com.example.administrator.myweather.db.DBManager;
 import com.example.administrator.myweather.db.ProvinceEntity;
+import com.example.administrator.myweather.rxjava.ErrorCompleteObserver;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -25,6 +26,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -37,23 +39,26 @@ public class CityDataLoad {
     private final static String TAG = "CityDataLoad";
 
 
-    public static void loadCityData(Context context, Observer<Boolean> observer) {
+    public static void loadCityData(Context context) {
         Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             loadData(context);
             e.onComplete();
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(observer);
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new ErrorCompleteObserver<Boolean>() {
+            @Override
+            public void onError(Throwable e) {
+                LogUtil.e(TAG, "加载城市信息到数据库失败");
+            }
+
+            @Override
+            public void onComplete() {
+                SharedPreferenceHelper.getInstance()
+                        .putBoolean(Constants.SharedPreferenceKeyConstant.KEY_HAS_LOAD_DATA, true);
+                LogUtil.d(TAG, "加载城市信息到数据库成功");
+
+            }
+        });
     }
 
-    public static Observable<Boolean> loadCityData(Context context) {
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                loadData(context);
-                e.onNext(true);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.io());
-    }
 
     /**
      * 加载城市信息到数据库的具体逻辑
@@ -71,7 +76,6 @@ public class CityDataLoad {
         List<ProvinceEntity> provinceEntityList = new ArrayList<>();
         while (!TextUtils.isEmpty(contentProvince = bufferedReaderProvince.readLine())) {
             ProvinceEntity provinceEntity = gson.fromJson(contentProvince, ProvinceEntity.class);
-            LogUtil.e("id", provinceEntity.getId() + "");
             provinceEntityList.add(provinceEntity);
         }
         DBManager.getInstance(context).insertProvinceList(provinceEntityList);
