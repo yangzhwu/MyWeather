@@ -56,28 +56,25 @@ public class LocationHelper {
             option.setLocationCacheEnable(false);
             aMapLocationClient.setLocationOption(option);
 
-            aMapLocationClient.setLocationListener(new AMapLocationListener() {
-                @Override
-                public void onLocationChanged(AMapLocation aMapLocation) {
-                    isLocating = false;
-                    //定位成功
-                    if (aMapLocation.getErrorCode() == 0) {
-                        if (!mLocationChangeListenerList.isEmpty()) {
-                            for (LocationChangeListener locationChangeListener : mLocationChangeListenerList) {
-                                locationChangeListener.locationSucess(aMapLocation);
-                            }
-                        }
-                    } else {
-                        LogUtil.e("ERRCODE", aMapLocation.getErrorCode() + " " + aMapLocation.getErrorInfo());
-                        if (!mLocationChangeListenerList.isEmpty()) {
-                            for (LocationChangeListener locationChangeListener : mLocationChangeListenerList) {
-                                locationChangeListener.locationFailed(aMapLocation);
-                            }
+            aMapLocationClient.setLocationListener(aMapLocation -> {
+                isLocating = false;
+                //定位成功
+                if (aMapLocation.getErrorCode() == 0) {
+                    if (!mLocationChangeListenerList.isEmpty()) {
+                        for (LocationChangeListener locationChangeListener : mLocationChangeListenerList) {
+                            locationChangeListener.locationSucess(aMapLocation);
                         }
                     }
-                    aMapLocationClient.stopLocation();
-                    aMapLocationClient.onDestroy();
+                } else {
+                    LogUtil.e("ERRCODE", aMapLocation.getErrorCode() + " " + aMapLocation.getErrorInfo());
+                    if (!mLocationChangeListenerList.isEmpty()) {
+                        for (LocationChangeListener locationChangeListener : mLocationChangeListenerList) {
+                            locationChangeListener.locationFailed(aMapLocation);
+                        }
+                    }
                 }
+                aMapLocationClient.stopLocation();
+                aMapLocationClient.onDestroy();
             });
             aMapLocationClient.startLocation();
         }

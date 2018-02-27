@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -139,38 +140,40 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void loadWeatherData(String location) {
-        RetrofitManager retrofitManager = RetrofitManager.getIntance();
-        Observable.zip(retrofitManager.getWeather(location), retrofitManager.getSuggestion(location), retrofitManager.getNow(location),
-                (weatherBean, suggestionDataBean, nowDataBean) -> {
-                    FileUtil.saveBeanInfo(weatherBean.getClass(), weatherBean);
-                    FileUtil.saveBeanInfo(suggestionDataBean.getClass(), suggestionDataBean);
-                    FileUtil.saveBeanInfo(nowDataBean.getClass(), nowDataBean);
-                    DataCache.getInstance().setNowDataBean(nowDataBean);
-                    DataCache.getInstance().setSuggestionDataBean(suggestionDataBean);
-                    DataCache.getInstance().setWeatherBean(weatherBean);
-                    return true;
-                }).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new ErrorCompleteObserver<Boolean>() {
+        if (!TextUtils.isEmpty(location)) {
+            RetrofitManager retrofitManager = RetrofitManager.getIntance();
+            Observable.zip(retrofitManager.getWeather(location), retrofitManager.getSuggestion(location), retrofitManager.getNow(location),
+                    (weatherBean, suggestionDataBean, nowDataBean) -> {
+                        FileUtil.saveBeanInfo(weatherBean.getClass(), weatherBean);
+                        FileUtil.saveBeanInfo(suggestionDataBean.getClass(), suggestionDataBean);
+                        FileUtil.saveBeanInfo(nowDataBean.getClass(), nowDataBean);
+                        DataCache.getInstance().setNowDataBean(nowDataBean);
+                        DataCache.getInstance().setSuggestionDataBean(suggestionDataBean);
+                        DataCache.getInstance().setWeatherBean(weatherBean);
+                        return true;
+                    }).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new ErrorCompleteObserver<Boolean>() {
 
-            @Override
-            public void onNext(Boolean aBoolean) {
-                LogUtil.d("1111", "onNext");
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
+                @Override
+                public void onNext(Boolean aBoolean) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
 
-            @Override
-            public void onError(Throwable e) {
-                LogUtil.e("1111", "onError" + e.toString());
-                mSwipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(MainActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onError(Throwable e) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(MainActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onComplete() {
-                showData();
-                LogUtil.d("1111", "onComplete");
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+                @Override
+                public void onComplete() {
+                    showData();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(this, "请手动选择城市", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -295,7 +298,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void locationFailed(AMapLocation aMapLocation) {
         LogUtil.e("location", aMapLocation.getErrorCode() + aMapLocation.getErrorInfo());
-        mSwipeRefreshLayout.setRefreshing(false);
+        mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(false));
         Toast.makeText(this, "定位失败，请手动选择城市", Toast.LENGTH_SHORT).show();
     }
 

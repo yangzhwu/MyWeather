@@ -29,12 +29,6 @@ public class Constants {
         public static final String KEY_HAS_LOAD_DATA = "has_load_data";
         public static final String KEY_CHOOSE_COUNTY_WEATHER_ID = "choose_county_weather_id";
         public static final String KEY_CHOOSE_COUNTY_NAME = "choose_county_name";
-        public static final String KEY_LAST_CHOOSE_WEATHER_ID = "last_choose_weather_id";
-        public static final String KEY_LAST_CHOOSE_CITY_ID = "last_choose_city_id";
-
-        public static final String KEY_MOBILE_DATA_START = "key_mobile_data_start";
-        public static final String KEY_MOBILE_DATA_END = "key_mobile_data_end";
-        public static final String KEY_MOBILE_DATA_ALL = "key_mobile_data_all";
     }
 
     /**
@@ -44,9 +38,6 @@ public class Constants {
      */
 
     public static class ApiConstant {
-        //高德地图apiKey
-        public static final String Amap_KEY = "1afff7faebdab35f9d8edf48a3542433";
-
         //天气相关的key
         public static final String URL = "https://free-api.heweather.com/";
         public static final String WEATHER_KRY = "d74d81e2205841e98890a0a64980d14f";

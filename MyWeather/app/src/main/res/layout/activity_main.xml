@@ -25,6 +25,7 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_menu"
         app:itemBackground="@drawable/nav_item_clicked_background"
+        app:itemTextColor="#666666"
         android:background="@android:color/white">
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

@@ -58,7 +58,7 @@ public class ChooseAreaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_choose_area, container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
         initAdapter();
@@ -83,7 +83,7 @@ public class ChooseAreaFragment extends Fragment {
                 mRecyclerView.setAdapter(countyAdapter);
                 break;
             default:
-                Log.e("lalla", "no mode");
+                break;
         }
     }
 

@@ -42,13 +42,10 @@ public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         final ProvinceEntity provinceEntity = mProvinceEntityList.get(position);
         holder.mNameTv.setText(provinceEntity.getMProvinceName());
-        holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ChooseAreaFragment chooseAreaFragment = ChooseAreaFragment.newInstance(ChooseAreaActivity.CHOOSE_TYPE_CITY,
-                        provinceEntity.getMProvinceId());
-                FragmentUtil.replaceAreaFragment((AppCompatActivity) mContext, R.id.container, chooseAreaFragment, true);
-            }
+        holder.mLinearLayout.setOnClickListener(view -> {
+            ChooseAreaFragment chooseAreaFragment = ChooseAreaFragment.newInstance(ChooseAreaActivity.CHOOSE_TYPE_CITY,
+                    provinceEntity.getMProvinceId());
+            FragmentUtil.replaceAreaFragment((AppCompatActivity) mContext, R.id.container, chooseAreaFragment, true);
         });
     }
 
@@ -63,8 +60,8 @@ public class ProvinceAdapter extends RecyclerView.Adapter<ProvinceAdapter.ViewHo
 
         ViewHolder(View itemView) {
             super(itemView);
-            mNameTv = (TextView) itemView.findViewById(R.id.province_name);
-            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.linearlayout);
+            mNameTv = itemView.findViewById(R.id.province_name);
+            mLinearLayout = itemView.findViewById(R.id.linearlayout);
         }
     }
 }
