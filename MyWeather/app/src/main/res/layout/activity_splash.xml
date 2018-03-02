@@ -6,14 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.administrator.myweather.activity.SplashActivity"
-    android:fitsSystemWindows="true">
+    tools:context="com.example.administrator.myweather.activity.SplashActivity">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/splash_img"
-        android:scaleType="centerCrop"
-        android:fitsSystemWindows="true"/>
+        android:scaleType="centerCrop" />
 
 </LinearLayout>

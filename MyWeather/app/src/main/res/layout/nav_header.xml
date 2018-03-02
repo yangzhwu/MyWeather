@@ -8,16 +8,18 @@
 
     <ImageView
         android:id="@+id/person"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginTop="42dp"
-        android:src="@drawable/head_night" />
+        android:src="@drawable/head_default"
+        android:scaleType="centerCrop"
+         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="沐风"
+        android:text="亲爱的"
         android:textColor="#ffffff"
         android:textSize="20sp" />
 
@@ -26,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
         android:layout_marginTop="12dp"
-        android:text="人生像一场没有尽头的旅行."
+        android:text="人生就像一场没有尽头的旅行"
         android:textColor="#ffffff"
         android:textSize="16sp" />
 
