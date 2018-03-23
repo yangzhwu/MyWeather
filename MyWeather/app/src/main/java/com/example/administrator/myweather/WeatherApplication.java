@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.example.administrator.myweather.util.FileUtil;
 import com.example.administrator.myweather.util.LocationHelper;
 import com.example.administrator.myweather.util.LogUtil;
 import com.example.administrator.myweather.util.SharedPreferenceHelper;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -47,6 +49,11 @@ public class WeatherApplication extends Application {
 
         if (BuildConfig.DEBUG) {
             LogUtil.setLogLeve(LogUtil.LOG_LEVEL_D);
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
         }
+
+        //设置为普通统计场景
+        MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType. E_UM_NORMAL);
     }
 }

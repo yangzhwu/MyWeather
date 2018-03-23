@@ -30,6 +30,10 @@
         android:supportsRtl="true"
         android:theme="@style/MyAppTheme">
 
+        <!--umeng统计sdk-->
+        <meta-data android:value="5a9ca98aa40fa307d700014d" android:name="UMENG_APPKEY"/>
+        <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
+
         <!-- 高德定位 -->
         <meta-data
             android:name="com.amap.api.v2.apikey"

@@ -40,6 +40,29 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    //多渠道打包
+    flavorDimensions 'platform'
+    productFlavors {
+        kuan {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "kuan"]
+        }
+        xiaomi {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]
+        }
+        qh360 {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "qh360"]
+        }
+        baidu {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "baidu"]
+        }
+        wandoujia {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]
+        }
+        anzi {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "anzi"]
+        }
+    }
 }
 
 dependencies {
@@ -63,4 +86,6 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile 'net.zetetic:android-database-sqlcipher:3.5.2'
+
+    compile 'com.umeng.analytics:analytics:6.1.2'
 }

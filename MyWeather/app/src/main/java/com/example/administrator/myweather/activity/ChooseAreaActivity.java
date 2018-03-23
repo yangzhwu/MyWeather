@@ -11,7 +11,7 @@ import com.example.administrator.myweather.fragment.ChooseAreaFragment;
 import com.example.administrator.myweather.util.ActivityUtil;
 import com.example.administrator.myweather.util.FragmentUtil;
 
-public class ChooseAreaActivity extends AppCompatActivity {
+public class ChooseAreaActivity extends BaseActivity {
     public final static int CHOOSE_TYPE_PROVINCE = 1;
     public final static int CHOOSE_TYPE_CITY = 2;
     public final static int CHOOSE_TYPE_COUNTY = 3;

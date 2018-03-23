@@ -47,6 +47,7 @@ public class FileUtil {
             if (file.createNewFile()) {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
                 objectOutputStream.writeObject(beanInfo);
+                objectOutputStream.close();
                 e.onNext(true);
                 e.onComplete();
             }
@@ -92,6 +93,7 @@ public class FileUtil {
             if (file.exists()) {
                 ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
                 Object object = objectInputStream.readObject();
+                objectInputStream.close();
                 e.onNext((T) object);
                 e.onComplete();
             } else {
