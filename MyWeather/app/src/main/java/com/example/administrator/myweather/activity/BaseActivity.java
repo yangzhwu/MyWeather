@@ -1,6 +1,5 @@
 package com.example.administrator.myweather.activity;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,8 +9,8 @@ import android.view.View;
 
 import com.umeng.analytics.MobclickAgent;
 
-@SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
+
+public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
